@@ -1,0 +1,6 @@
+{
+  "name": "AccessAble - AI Web Accessibility Audit Platform",
+  "description": "Comprehensive website accessibility audit platform with WCAG 2.2 compliance checking, severity metrics, code fix recommendations, and report generation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
