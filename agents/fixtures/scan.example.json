@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "jobId": "demo-001",
+  "project": {
+    "workspaceId": "trusted-demo",
+    "baseCommit": "c49307ef529a5ad3f0e510dbdd8d9c92ef22abf8"
+  },
+  "scan": {
+    "profileId": "trusted-demo",
+    "violations": [
+      {
+        "id": "button-name",
+        "impact": "critical",
+        "nodes": [
+          {
+            "target": [
+              "#search"
+            ],
+            "html": "<button id=\"search\"></button>"
+          }
+        ]
+      }
+    ]
+  }
+}
