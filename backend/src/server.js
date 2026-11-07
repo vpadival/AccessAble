@@ -1,3 +1,5 @@
+import { reviewRouter } from '../../agents/src/review-router.js';
+import { ArtifactStore } from '../../agents/src/artifact-store.js';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -34,6 +36,9 @@ app.use(
 );
 app.disable('x-powered-by');
 app.use(express.json({limit:'16kb'}));
+// Only trusted host orchestration can publish into this map; HTTP clients cannot forge validated jobs.
+export const reviewJobs = new Map();
+app.use('/api/v1/agent-jobs', reviewRouter({Router:express.Router,jobs:reviewJobs,artifacts:new ArtifactStore(process.env.AGENT_ARTIFACT_DIR || '.accessable-artifacts'),reviewerToken:process.env.REVIEWER_TOKEN,reviewerId:process.env.REVIEWER_ID}));
 
 // ----------------------------------------------------------------------------
 // Routes
