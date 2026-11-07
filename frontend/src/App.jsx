@@ -198,10 +198,7 @@ export default function App() {
               </div>
 
               <ScanForm
-                onSubmitScan={(payload) => {
-                  startNewScan(payload);
-                  setIsScanModalOpen(false);
-                }}
+                onSubmitScan={startNewScan}
                 isScanning={scanRunning}
                 isModal={true}
                 onClose={() => setIsScanModalOpen(false)}

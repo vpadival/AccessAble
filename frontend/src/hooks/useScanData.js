@@ -157,6 +157,7 @@ export function useScanData() {
       }
       return res;
     } catch (err) {
+      setError(err.message || 'Scan failed');
       setNotification({
         type: 'error',
         message: `Scan failed: ${err.message}`,

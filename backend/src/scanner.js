@@ -1,3 +1,4 @@
+import { navigateForScan } from './navigation.js';
 import { chromium } from 'playwright';
 import { approvedUrl } from './deployment-policy.js';
 import AxeBuilder from '@axe-core/playwright';
@@ -32,15 +33,7 @@ export async function runScan(url, { allowedHosts } = {}) {
     });
     const page = await context.newPage();
 
-    // Navigate to URL and wait for network idle
-    try {
-      await page.goto(url, {
-        waitUntil: 'networkidle',
-        timeout: 30000,
-      });
-    } catch (navError) {
-      throw new Error(`Failed to load target URL "${url}": ${navError.message}`);
-    }
+    await navigateForScan(page, url);
 
     // Invalidate if page is unreachable or encountered major load error
     const Axe = AxeBuilder.default || AxeBuilder;

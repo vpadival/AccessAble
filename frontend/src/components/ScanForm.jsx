@@ -12,16 +12,20 @@ export default function ScanForm({
   const [standard, setStandard] = useState('WCAG 2.2 Level AA');
   const [scanDepth, setScanDepth] = useState('15');
 
-  const handleSubmit = (e) => {
+  const [submitError, setSubmitError] = useState(null);
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!targetUrl) return;
-    onSubmitScan({
+    setSubmitError(null);
+    try {
+    await onSubmitScan({
       targetUrl,
       repoUrl,
       standard,
       depth: parseInt(scanDepth, 10),
     });
     if (onClose) onClose();
+    } catch (error) { setSubmitError(error.message || "Scan failed"); }
   };
 
   const sampleTargets = [
@@ -32,6 +36,7 @@ export default function ScanForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {submitError && <p role="alert" className="text-rose-400">{submitError}</p>}
       {/* Target URL */}
       <div>
         <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
