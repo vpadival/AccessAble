@@ -3,18 +3,23 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { runScan } from './scanner.js';
 import { toFrontendReport } from './transformers/toFrontendFormat.js';
-import { toAgentJob } from './transformers/toAgentFormat.js';
+import { approvedUrl, productionHosts } from './deployment-policy.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const production = process.env.NODE_ENV === 'production';
+const hosts = productionHosts();
+if (production && (!hosts.length || !process.env.ALLOWED_ORIGINS)) throw new Error('Set SCAN_ALLOWED_HOSTS and ALLOWED_ORIGINS in production');
+let activeScans = 0;
+let lastScanAt = 0;
 
 // In-memory store for accessibility scans
 const scans = new Map();
 
 // Middleware
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000'];
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map(x=>x.trim()) || ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000'];
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -27,7 +32,8 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
+app.disable('x-powered-by');
+app.use(express.json({limit:'16kb'}));
 
 // ----------------------------------------------------------------------------
 // Routes
@@ -65,6 +71,14 @@ app.post('/api/v1/scans', (req, res) => {
     });
   }
 
+  if (production && !approvedUrl(targetUrl, hosts)) return res.status(403).json({error:'Target is not an operator-approved HTTPS demo host'});
+  if (activeScans >= 1 || (production && Date.now() - lastScanAt < 15000)) return res.status(429).json({error:'Scanner busy; retry shortly'});
+  activeScans++;
+  lastScanAt = Date.now();
+  if (scans.size >= 100) {
+    const oldest = [...scans].find(([,entry]) => entry.status !== 'scanning');
+    if (oldest) scans.delete(oldest[0]);
+  }
   const scanId = `scan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const timestamp = new Date().toISOString();
 
@@ -95,7 +109,7 @@ app.post('/api/v1/scans', (req, res) => {
     const startTime = Date.now();
     try {
       console.log(`[Scanner] Started scan ${scanId} for: ${targetUrl}`);
-      const rawAxeResult = await runScan(targetUrl);
+      const rawAxeResult = await runScan(targetUrl, production ? { allowedHosts: hosts } : {});
       const durationSeconds = Number(((Date.now() - startTime) / 1000).toFixed(2));
 
       // 1. Transform to frontend report
@@ -134,7 +148,7 @@ app.post('/api/v1/scans', (req, res) => {
         entry.status = 'failed';
         entry.error = err.message;
       }
-    }
+    } finally { activeScans--; }
   })();
 });
 
@@ -266,7 +280,7 @@ app.get('/api/v1/scans/:scanId/report', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, '127.0.0.1', () => {
+app.listen(PORT, process.env.HOST || (production ? '0.0.0.0' : '127.0.0.1'), () => {
   console.log(`AccessAble Backend API server running on port ${PORT}`);
   console.log(`Health check: http://localhost:${PORT}/api/v1/health`);
 });
