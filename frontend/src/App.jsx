@@ -1,3 +1,5 @@
+import AgentReview from './components/AgentReview.jsx';
+import { API_CONFIG } from './services/api.js';
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { X, ShieldAlert, AlertTriangle } from 'lucide-react';
@@ -74,7 +76,7 @@ export default function App() {
           />
 
           {/* Mandatory Central Demonstration Notice Banner */}
-          {!isBannerDismissed && (
+          {API_CONFIG.useMockData && !isBannerDismissed && (
             <div className="bg-[#101C38] border-b border-blue-900/40 px-6 py-2.5 text-xs text-blue-200 flex items-center justify-between gap-4 no-print">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-blue-400 shrink-0"></span>
@@ -112,6 +114,7 @@ export default function App() {
             ) : (
               <ErrorBoundary>
                 <Routes>
+                  <Route path="/agent-review" element={<AgentReview />} />
                   <Route
                     path="/"
                     element={
