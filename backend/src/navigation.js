@@ -9,7 +9,7 @@ export async function navigateForScan(page, url) {
       if (attempt === 0 && /net::ERR_HTTP2_PROTOCOL_ERROR/.test(error.message)) continue;
       const detail = /net::ERR_HTTP2_PROTOCOL_ERROR/.test(error.message)
         ? 'The target failed HTTP/2 navigation after one retry. The site or network may be incompatible with automated browsing; no accessibility result was generated.'
-        : error.message;
+        : error.message.replace(/\u001b\[[0-9;]*m/g, '').split('Call log:')[0].trim();
       throw new Error(`Failed to load target URL "${url}": ${detail}`);
     }
   }

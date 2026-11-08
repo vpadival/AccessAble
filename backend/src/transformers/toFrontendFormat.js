@@ -242,6 +242,8 @@ export function toFrontendReport(
       repoUrl,
       standard,
       auditEngine: 'AccessAble Core v1.0',
+      finalUrl: rawAxeResults?.scanContext?.finalUrl || safeTargetUrl,
+      readinessWarning: rawAxeResults?.scanContext?.readinessWarning || null,
       pagesScanned: 1,
       domNodesAudited: uniqueDomTargets.size,
       durationSeconds: Number(durationSeconds || 0),

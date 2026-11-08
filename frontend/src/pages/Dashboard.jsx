@@ -145,8 +145,9 @@ export default function Dashboard({
             Overall Accessibility Score
           </span>
           <ScoreGauge score={dynamicMetrics?.dynamicScore ?? summary?.currentScore ?? 0} size="md" />
-          <p className="mt-3 text-xs text-slate-400 break-all text-center">Scanned page: {metadata?.targetUrl || 'No completed scan'}</p>
+          <p className="mt-3 text-xs text-slate-400 break-all text-center">Scanned page: {metadata?.finalUrl || metadata?.targetUrl || 'No completed scan'}</p>
           <p className="mt-2 text-xs text-slate-400 text-center">Heuristic score: 100 minus 10 per critical, 5 per serious, 2 per moderate and 1 per minor finding, with a minimum of 0. Automated checks do not establish WCAG conformance.</p>
+          {metadata?.readinessWarning && <p role="status" className="text-xs text-amber-300">{metadata.readinessWarning}</p>}
           {summary?.currentScore === 0 && <p className="mt-2 text-xs text-amber-300 text-center">The findings reach the score’s zero floor. Compare severity counts to distinguish scans with the same score.</p>}
           <div className="mt-4 pt-3 border-t border-slate-800/80 w-full flex items-center justify-between text-xs text-slate-400">
             <span>Automated scan indicator</span>

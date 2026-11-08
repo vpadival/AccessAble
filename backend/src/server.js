@@ -1,3 +1,4 @@
+import { normalizeTargetUrl } from './target-url.js';
 import { reviewRouter } from '../../agents/src/review-router.js';
 import { ArtifactStore } from '../../agents/src/artifact-store.js';
 import express from 'express';
@@ -60,7 +61,7 @@ app.get('/api/v1/health', (req, res) => {
  * POST /api/v1/scans
  */
 app.post('/api/v1/scans', (req, res) => {
-  const { targetUrl, repoUrl = null, standard = 'WCAG 2.2 Level AA' } = req.body || {};
+  let { targetUrl, repoUrl = null, standard = 'WCAG 2.2 Level AA' } = req.body || {};
 
   if (!targetUrl || typeof targetUrl !== 'string') {
     return res.status(400).json({
@@ -69,7 +70,7 @@ app.post('/api/v1/scans', (req, res) => {
   }
 
   try {
-    new URL(targetUrl);
+    targetUrl = normalizeTargetUrl(targetUrl);
   } catch {
     return res.status(400).json({
       error: `Invalid URL format: "${targetUrl}". Please include protocol (e.g. http:// or https://).`,

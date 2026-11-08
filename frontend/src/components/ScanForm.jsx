@@ -7,8 +7,8 @@ export default function ScanForm({
   isModal = false,
   onClose,
 }) {
-  const [targetUrl, setTargetUrl] = useState('https://shopflow-demo.store');
-  const [repoUrl, setRepoUrl] = useState('https://github.com/shopflow-org/storefront');
+  const [targetUrl, setTargetUrl] = useState('https://example.com');
+  const [repoUrl, setRepoUrl] = useState('');
   const [standard, setStandard] = useState('WCAG 2.2 Level AA');
   const [scanDepth, setScanDepth] = useState('15');
 
@@ -29,9 +29,8 @@ export default function ScanForm({
   };
 
   const sampleTargets = [
-    { name: 'E-Commerce Storefront', url: 'https://shopflow-demo.store', repo: 'https://github.com/shopflow-org/storefront' },
-    { name: 'Healthcare Portal', url: 'https://acme-health-portal.org', repo: 'https://github.com/acme-corp/patient-portal' },
-    { name: 'Fintech App', url: 'https://fintech-loan-dashboard.io', repo: 'https://github.com/fintech-labs/borrower-ui' },
+    { name: 'Example Domain', url: 'https://example.com', repo: '' },
+    { name: 'W3C Accessibility Demo', url: 'https://www.w3.org/WAI/demos/bad/before/home.html', repo: '' },
   ];
 
   return (
