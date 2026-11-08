@@ -1,4 +1,4 @@
-# Member 2 workflow foundation
+# AccessAble Agent Workflow
 
 Dependency-free Node 22 ES module. Run `npm --prefix agents test` and `npm --prefix agents run demo` from the repository root.
 
@@ -30,6 +30,10 @@ The host must ensure evidence corresponds to the exact candidate, run equivalent
 
 Approval decision: `{decision: 'approved' | 'rejected', candidateDigest: '<digest>'}`. Principal: `{kind: 'human', id: '<authenticated-id>'}` supplied exclusively by trusted host/session context. Result remains `appliedToOriginal: false`.
 
-## Integration still required
+## Integration status
 
-Member 1 must supply scanner invocation, structured sample output, trusted validation profiles and candidate serving mechanism. No backend/frontend files were changed. Persisted job storage and authenticated room decision ingestion remain to be implemented after agreeing that interface. Live Codex repair/validation handoff and browser evidence remain to be demonstrated in Switch; unit-test adapter stubs are not scanner evidence.
+The backend provides the Playwright/axe scanner and scan transformers. `src/scanner-smoke.js` verifies scanner-to-workflow interoperability with a controlled fixture; the fixture correction is deterministic rather than AI-generated.
+
+`src/artifact-store.js` saves content-addressed JSON artifacts and checks integrity on reads. `src/evidence-adapter.js` binds before/after evidence to a candidate digest, source revision, and validation profile. Host code must supply authorized candidate URLs and keep artifact storage outside agent-writable workspaces.
+
+`src/review-router.js` provides reviewer-authenticated job inspection and decisions when mounted by the backend. Job publication remains a trusted host operation. Live Switch handoff, candidate workspace provisioning, persistent job indexing, and room-to-review publication remain unfinished. Tests using adapter stubs do not establish live integration.

@@ -36,6 +36,6 @@ node agents/src/api-smoke.js
 
 Implemented: frontend/backend audit flow, real Playwright + axe scanner, polling and explicit live errors, report retrieval, agent workflow foundation with human approval checks.
 
-Pending: live Switch repair/validation handoff, authorized candidate workspace provisioning, durable validation evidence, authenticated job/approval API and frontend approval integration. Smoke fixture repair is deterministic, not AI-generated. No automatic deployment, merge, or source patch application is part of the application workflow. This is a tested integration baseline, not the complete end-to-end agent product.
+Saved validation artifacts, candidate-bound evidence checks, reviewer-authenticated API routes, and a review page are implemented as foundations. Pending: live Switch repair/validation handoff, authorized candidate workspace provisioning, persistent job indexing, and end-to-end job publication into the review interface. Smoke fixture repair is deterministic, not AI-generated. No automatic deployment, merge, or source patch application is part of the application workflow. This is a tested integration baseline, not the complete end-to-end agent product.
 
 See switch/LOCAL-INTEGRATION.md and switch/VALIDATION.md for details.

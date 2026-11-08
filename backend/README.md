@@ -5,14 +5,14 @@ Accessibility audit engine and REST API service powered by Playwright and axe-co
 ## Getting Started
 
 ### 1. Prerequisites
-- Node.js >= 20
+- Node.js >= 22
 - npm >= 9
 
 ### 2. Installation
 ```bash
 cd backend
-npm install
-npx playwright install chromium
+npm ci --ignore-scripts
+node node_modules/playwright/cli.js install chromium
 ```
 
 ### 3. Environment Variables
@@ -29,7 +29,7 @@ Default port is `4000`.
 npm run dev
 ```
 
-#### Production:
+#### Start without auto-reload:
 ```bash
 npm start
 ```
@@ -143,3 +143,20 @@ Base URL: `http://localhost:4000/api/v1`
     ]
   }
   ```
+
+
+## Reports and candidate review
+
+`GET /api/v1/scans/:scanId/report` returns the completed report, or the current scan status.
+
+The `/api/v1/agent-jobs` routes expose job inspection and candidate approval/rejection. Configure `REVIEWER_TOKEN` and `REVIEWER_ID` in the backend environment; requests require a matching bearer token. Keep that credential out of Git and agent access. `AGENT_ARTIFACT_DIR` sets host-owned artifact storage. Review jobs must be published by trusted host code; live Switch publication is not connected.
+
+Approval records permission for an exact candidate digest and does not apply patches, merge branches, or deploy sites.
+
+## Runtime behavior
+
+Local scans and history are stored in memory and reset on restart. A scan request does not authorize source repository access or repairs. The fix-comparison endpoint reports unchanged before/after values until real repair evidence is integrated.
+
+Navigation uses DOM readiness and retries HTTP/2 protocol failures once. Unreachable pages and HTTP error responses fail the scan rather than producing accessibility results. Restart the server after edits when using `npm start`, or use `npm run dev` for automatic reload.
+
+Scores are application-specific severity indicators and do not certify WCAG compliance. See the [project README](../readme.md) for integration checks and limitations.
